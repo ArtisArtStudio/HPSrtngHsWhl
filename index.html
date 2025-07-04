@@ -94,6 +94,7 @@
             position: absolute;
             width: 50%;
             height: 50%;
+            pointer-events: none;
             transform-origin: right bottom;
         }
         
@@ -399,7 +400,7 @@
 <body>
     <div class="stars" id="stars"></div>
     
-    <div class="container">
+    <div class="container" id="container">
         <h1>⚡ Hogwarts House Sorting ⚡</h1>
         <p class="subtitle">Enter your magical sorting code to discover your destiny</p>
         
@@ -413,7 +414,7 @@
             <div class="error" id="error"></div>
         </div>
         
-        <div class="spinner-container">
+        <div class="spinner-container" id="spinnerContainer">
             <div class="spinner-pointer"></div>
             <div class="spinner" id="spinner">
                 <div class="spinner-segment gryffindor"></div>
@@ -445,7 +446,10 @@
                 'ravenclaw': 45,
                 'slytherin': 135
             };
-            const radius = 30; // px, distance from center (same as before)
+            const ell= document.querySelector('.spinner-container');
+            
+            // Radius from center to house names (same as before)
+            let radius = 30; // px, distance from center (same as before)
             ['gryffindor','hufflepuff','ravenclaw','slytherin'].forEach(house => {
                 const el = document.querySelector('.house-' + house);
                 if (!el) return;
@@ -461,9 +465,12 @@
                 tempSpan.style.fontSize = window.getComputedStyle(el).fontSize;
                 tempSpan.style.fontFamily = window.getComputedStyle(el).fontFamily;
                 tempSpan.textContent = textNode.textContent.trim();
+                
                 document.body.appendChild(tempSpan);
                 const textHeight = tempSpan.getBoundingClientRect().height;
+                const textWidth = tempSpan.getBoundingClientRect().width;
                 document.body.removeChild(tempSpan);
+                radius = ((ell.getBoundingClientRect().width / 2) - textWidth)  / 2 ; // Adjust radius to fit text width
                 // Center using only the text height
                 el.style.transform = `rotate(${houseAngles[house]}deg) translateX(${radius}px) translateY(${-0.5 * textHeight}px)`;
             });
@@ -475,7 +482,7 @@
         setTimeout(centerHouseNames, 100); // fallback for late font load
 
         // Student code to house mapping - completely random looking codes
-        const studentHouses = {
+        /* const studentHouses = {
             // Example codes - these look completely random but map to specific houses
             'MX7K9P': 'gryffindor',
             'QR3N8L': 'hufflepuff',
@@ -497,15 +504,16 @@
             'LD3F8W': 'hufflepuff',
             'PQ7X2Z': 'ravenclaw',
             'VH5J4S': 'slytherin'
-        };
+        };*/
         
         const houseDescriptions = {
             'gryffindor': 'Congratulations! You belong in GRYFFINDOR! You are brave, daring, and chivalrous. Your courage and determination will serve you well in all your magical endeavors.',
             'hufflepuff': 'Congratulations! You belong in HUFFLEPUFF! You are loyal, patient, and hardworking. Your dedication and fairness make you a true friend to all.',
             'ravenclaw': 'Congratulations! You belong in RAVENCLAW! You are wise, creative, and curious. Your love of learning and wit will unlock many mysteries.',
             'slytherin': 'Congratulations! You belong in SLYTHERIN! You are ambitious, cunning, and resourceful. Your determination and leadership will help you achieve great things.'
-        };
-        
+        }; 
+        let studentHouses = {}; // this will be filled dynamically
+        let triggered = false; // Track if the button was clicked to reset
         // Target rotations to point the pointer (12 o'clock) to the center of each house segment
         // Each segment is 90°, so centers are at -45° (315°), 45°, 135°, 225°
         const houseRotations = {
@@ -516,7 +524,8 @@
         };
         
         const spinBtn = document.getElementById('spinBtn');
-        const spinner = document.getElementById('spinner');
+        const container = document.getElementById('container');
+        const spinnercont = document.getElementById('spinnerContainer');
         const result = document.getElementById('result');
         const studentCode = document.getElementById('studentCode');
         const error = document.getElementById('error');
@@ -537,10 +546,42 @@
                 starsContainer.appendChild(star);
             }
         }
-        
+        spinBtn.disabled = true;
+        async function fetchStudentHouses() {
+            try {
+                const response = await fetch("https://script.google.com/macros/s/AKfycbyIvl1sDKrAa5n_FnbJlEkFXr5wHivFmcWnzCxoECpNrPeC_fq8L5GUP1u3V1Bjrr53-A/exec"); 
+                const data = await response.json();
+                // Map codes to houses
+                data.forEach(entry => {
+                    if (entry.code && entry.house) {
+                        studentHouses[entry.code.toUpperCase()] = entry.house.toLowerCase();
+                    }
+                });
+            } catch (error) {
+                console.error("Failed to fetch student codes:", error);
+            }
+            spinBtn.disabled = false;
+
+        }
+
         createStars();
-        
+        fetchStudentHouses().then(() => {
+        });
         spinBtn.addEventListener('click', () => {
+            if (spinBtn.disabled) return; // Prevent multiple clicks
+            if(triggered) {
+                studentCode.value = '';
+                error.textContent = '';
+                result.style.display = 'none';
+                currentRotation = 0; // Reset rotation for new spin
+                spinner.style.transform = 'rotate(0deg)'; // Reset spinner position
+                spinner.classList.remove('spinning');
+                spinBtn.textContent = '🪄 Cast the Sorting Spell';
+                studentCode.classList.add('input-glow-anim');
+                triggered = false; // Reset trigger
+                container.scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
             const code = studentCode.value.trim().toUpperCase();
             if (!code) {
                 error.textContent = 'Please enter your sorting code!';
@@ -551,6 +592,7 @@
                 error.textContent = 'Invalid code! Please check with your teacher.';
                 return;
             }
+            spinnercont.scrollIntoView({ behavior: 'smooth' });
             error.textContent = '';
             spinBtn.disabled = true;
             result.style.display = 'none';
@@ -591,6 +633,9 @@
             
             // Scroll to result
             result.scrollIntoView({ behavior: 'smooth' });
+            spinBtn.disabled = false;
+            spinBtn.textContent = '🔄 Spin Again';
+            triggered = true; // Set trigger to true after successful spin
         }
         
         // Clear error when typing
