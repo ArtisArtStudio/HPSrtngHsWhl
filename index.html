@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hogwarts House Sorting Spinner</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .code-section {
+            margin-bottom: 30px;
+        }
+        
+        .code-input {
+            padding: 15px;
+            font-size: 1.1em;
+            border: 3px solid #ffd700;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            text-align: center;
+            width: 200px;
+            margin: 10px;
+            backdrop-filter: blur(10px);
+            font-family: 'Cinzel', serif;
+            box-shadow: 0 0 18px 6px #ffe066, 0 0 0 0 #ffd700;
+            animation: input-glow 4.5s ease-in-out infinite;
+        }
+        
+        .code-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .spinner-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 30px auto;
+        }
+        
+        .spinner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            border: 5px solid #ffd700;
+            transition: transform 0.5s ease-out;
+            /* Removed static rotation, will handle in JS */
+        }
+        
+        .spinner-segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: right bottom;
+        }
+        
+        .gryffindor {
+            background: linear-gradient(45deg, #740001, #ae0001);
+            border-bottom: 2px solid #ffd700;
+            border-right: 2px solid #ffd700;
+        }
+        
+        .hufflepuff {
+            background: linear-gradient(45deg, #ecb939, #f0c75e);
+            transform: rotate(90deg);
+            border-bottom: 2px solid #372e29;
+            border-right: 2px solid #372e29;
+        }
+        
+        .ravenclaw {
+            background: linear-gradient(45deg, #0e1a40, #222f5b);
+            transform: rotate(180deg);
+            border-bottom: 2px solid #946b2d;
+            border-right: 2px solid #946b2d;
+        }
+        
+        .slytherin {
+            background: linear-gradient(45deg, #1a472a, #2a623d);
+            transform: rotate(270deg);
+            border-bottom: 2px solid #aaaaaa;
+            border-right: 2px solid #aaaaaa;
+        }
+        
+        .house-name {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 0;
+            font-weight: 700;
+            font-size: 14px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            z-index: 10;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .house-gryffindor {
+            color: #ffd700;
+            /* JS will set transform for centering */
+        }
+        .house-hufflepuff {
+            color: #372e29;
+            /* JS will set transform for centering */
+        }
+        .house-ravenclaw {
+            color: #946b2d;
+            /* JS will set transform for centering */
+        }
+        .house-slytherin {
+            color: #aaaaaa;
+            /* JS will set transform for centering */
+        }
+        
+        .house-emoji {
+            display: block;
+            font-size: 2.6em;
+            margin-top: 2px;
+            text-align: center;
+        }
+        
+        .spinner-pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #ffd700;
+            z-index: 20;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        
+        .spin-btn {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border: none;
+            padding: 5px 10px;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #1a1a2e;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Cinzel', serif;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+        
+        .spin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.6);
+        }
+        
+        .spin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid;
+            display: none;
+            position: relative;
+            z-index: 100;
+            transform: none !important;
+        }
+        
+        .result.gryffindor {
+            background: linear-gradient(135deg, rgba(116, 0, 1, 0.8), rgba(174, 0, 1, 0.6));
+            border-color: #ffd700;
+        }
+        
+        .result.hufflepuff {
+            background: linear-gradient(135deg, rgba(236, 185, 57, 0.8), rgba(240, 199, 94, 0.6));
+            border-color: #372e29;
+            color: #372e29;
+        }
+        
+        .result.ravenclaw {
+            background: linear-gradient(135deg, rgba(14, 26, 64, 0.8), rgba(34, 47, 91, 0.6));
+            border-color: #946b2d;
+        }
+        
+        .result.slytherin {
+            background: linear-gradient(135deg, rgba(26, 71, 42, 0.8), rgba(42, 98, 61, 0.6));
+            border-color: #aaaaaa;
+        }
+        
+        .result h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .result p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            background: #ffd700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: twinkle 3s infinite;
+            width: 10px !important;
+            height: 10px !important;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(var(--start-rotation, 0deg)); }
+            100% { transform: rotate(var(--end-rotation, 0deg)); }
+        }
+        
+        @keyframes input-glow {
+            0% {
+                box-shadow: 0 0 18px 6px #ffe066, 0 0 0 0 #ffd700;
+            }
+            25% {
+                box-shadow: 0 0 32px 16px #ffd700, 0 0 0 0 #ffe066;
+            }
+            50% {
+                box-shadow: 0 0 8px 2px #ffe066, 0 0 0 0 #ffd700;
+            }
+            75% {
+                box-shadow: 0 0 32px 16px #ffd700, 0 0 0 0 #ffe066;
+            }
+            100% {
+                box-shadow: 0 0 18px 6px #ffe066, 0 0 0 0 #ffd700;
+            }
+        }
+        
+        .spinning {
+            animation: spin 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        
+        .error {
+            color: #ff6b6b;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .instructions h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .spinner-container {
+                width: 320px;
+                height: 320px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .code-input {
+                width: 280px;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .spinner-container {
+                width: 280px;
+                height: 280px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .code-input {
+                width: 250px;
+            }
+            
+            .house-name {
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-height: 600px) and (orientation: landscape) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 5px;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+                margin-bottom: 15px;
+            }
+            
+            .spinner-container {
+                width: 250px;
+                height: 250px;
+                margin: 15px auto;
+            }
+            
+            .instructions {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .result {
+                margin-top: 15px;
+                padding: 15px;
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .spinner-container {
+                width: 450px;
+                height: 450px;
+            }
+            
+            .house-name {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <h1>⚡ Hogwarts House Sorting ⚡</h1>
+        <p class="subtitle">Enter your magical sorting code to discover your destiny</p>
+        
+        <div class="instructions">
+            <h3>📜 Instructions for Students:</h3>
+            <p>Enter the unique sorting code provided by your teacher, then click the spinner to discover your Hogwarts house!</p>
+        </div>
+        
+        <div class="code-section">
+            <input type="text" class="code-input" id="studentCode" placeholder="Enter your code">
+            <div class="error" id="error"></div>
+        </div>
+        
+        <div class="spinner-container">
+            <div class="spinner-pointer"></div>
+            <div class="spinner" id="spinner">
+                <div class="spinner-segment gryffindor"></div>
+                <div class="spinner-segment hufflepuff"></div>
+                <div class="spinner-segment ravenclaw"></div>
+                <div class="spinner-segment slytherin"></div>
+                <div class="house-name house-gryffindor">GRYFFINDOR<br><span class="house-emoji">🦁</span></div>
+                <div class="house-name house-hufflepuff">HUFFLEPUFF<br><span class="house-emoji">🦡</span></div>
+                <div class="house-name house-ravenclaw">RAVENCLAW<br><span class="house-emoji">🦅</span></div>
+                <div class="house-name house-slytherin">SLYTHERIN<br><span class="house-emoji">🐍</span></div>
+            </div>
+        </div>
+        
+        <button class="spin-btn" id="spinBtn">🪄 Cast the Sorting Spell</button>
+        
+        <div class="result" id="result">
+            <h2 id="resultHouse"></h2>
+            <p id="resultDescription"></p>
+        </div>
+    </div>
+    
+    <script>
+        // --- Dynamic centering of house names ---
+        function centerHouseNames() {
+            // Segment center angles in degrees (relative to spinner, 0deg = right, counterclockwise)
+            const houseAngles = {
+                'gryffindor': -135,
+                'hufflepuff': -45,
+                'ravenclaw': 45,
+                'slytherin': 135
+            };
+            const radius = 30; // px, distance from center (same as before)
+            ['gryffindor','hufflepuff','ravenclaw','slytherin'].forEach(house => {
+                const el = document.querySelector('.house-' + house);
+                if (!el) return;
+                // Reset transform to measure
+                el.style.transform = 'none';
+                // Only measure the text node, not the emoji
+                const textNode = el.childNodes[0];
+                // Create a temporary span to measure just the text
+                let tempSpan = document.createElement('span');
+                tempSpan.style.visibility = 'hidden';
+                tempSpan.style.position = 'absolute';
+                tempSpan.style.fontWeight = '700';
+                tempSpan.style.fontSize = window.getComputedStyle(el).fontSize;
+                tempSpan.style.fontFamily = window.getComputedStyle(el).fontFamily;
+                tempSpan.textContent = textNode.textContent.trim();
+                document.body.appendChild(tempSpan);
+                const textHeight = tempSpan.getBoundingClientRect().height;
+                document.body.removeChild(tempSpan);
+                // Center using only the text height
+                el.style.transform = `rotate(${houseAngles[house]}deg) translateX(${radius}px) translateY(${-0.5 * textHeight}px)`;
+            });
+        }
+        // Run after DOM is ready and on resize (for font size changes)
+        window.addEventListener('DOMContentLoaded', centerHouseNames);
+        window.addEventListener('resize', centerHouseNames);
+        // Also after font size changes (e.g. media queries)
+        setTimeout(centerHouseNames, 100); // fallback for late font load
+
+        // Student code to house mapping - completely random looking codes
+        const studentHouses = {
+            // Example codes - these look completely random but map to specific houses
+            'MX7K9P': 'gryffindor',
+            'QR3N8L': 'hufflepuff',
+            'WZ5J2A': 'ravenclaw',
+            'BT4Y6U': 'slytherin',
+            'FH9X1C': 'gryffindor',
+            'VD8M3S': 'hufflepuff',
+            'PL2K7E': 'ravenclaw',
+            'NQ6R4W': 'slytherin',
+            'GJ1Z9B': 'gryffindor',
+            'HF3V8X': 'hufflepuff',
+            'SK5Q2M': 'ravenclaw',
+            'ZY7D4N': 'slytherin',
+            'RT8L6A': 'gryffindor',
+            'CW9P3J': 'hufflepuff',
+            'XE2S7K': 'ravenclaw',
+            'UB4M1Q': 'slytherin',
+            'YT6N9R': 'gryffindor',
+            'LD3F8W': 'hufflepuff',
+            'PQ7X2Z': 'ravenclaw',
+            'VH5J4S': 'slytherin'
+        };
+        
+        const houseDescriptions = {
+            'gryffindor': 'Congratulations! You belong in GRYFFINDOR! You are brave, daring, and chivalrous. Your courage and determination will serve you well in all your magical endeavors.',
+            'hufflepuff': 'Congratulations! You belong in HUFFLEPUFF! You are loyal, patient, and hardworking. Your dedication and fairness make you a true friend to all.',
+            'ravenclaw': 'Congratulations! You belong in RAVENCLAW! You are wise, creative, and curious. Your love of learning and wit will unlock many mysteries.',
+            'slytherin': 'Congratulations! You belong in SLYTHERIN! You are ambitious, cunning, and resourceful. Your determination and leadership will help you achieve great things.'
+        };
+        
+        // Target rotations to point the pointer (12 o'clock) to the center of each house segment
+        // Each segment is 90°, so centers are at -45° (315°), 45°, 135°, 225°
+        const houseRotations = {
+            'gryffindor': 135,    // swapped with ravenclaw
+            'hufflepuff': 45,
+            'ravenclaw': 315,     // swapped with gryffindor
+            'slytherin': 225
+        };
+        
+        const spinBtn = document.getElementById('spinBtn');
+        const spinner = document.getElementById('spinner');
+        const result = document.getElementById('result');
+        const studentCode = document.getElementById('studentCode');
+        const error = document.getElementById('error');
+        
+        let currentRotation = 0;
+        
+        // Create stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 2 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        createStars();
+        
+        spinBtn.addEventListener('click', () => {
+            const code = studentCode.value.trim().toUpperCase();
+            if (!code) {
+                error.textContent = 'Please enter your sorting code!';
+                return;
+            }
+            const assignedHouse = studentHouses[code];
+            if (!assignedHouse) {
+                error.textContent = 'Invalid code! Please check with your teacher.';
+                return;
+            }
+            error.textContent = '';
+            spinBtn.disabled = true;
+            result.style.display = 'none';
+            // Stop the input glow while spinning
+            studentCode.classList.remove('input-glow-anim');
+            studentCode.style.animation = 'none';
+            // Calculate target rotation for the assigned house (no random offset)
+            const targetRotation = houseRotations[assignedHouse];
+            const finalRotation = targetRotation;
+            // Calculate total rotation (multiple full spins + final position)
+            const totalRotation = currentRotation + 1440 + (finalRotation - (currentRotation % 360));
+            // Set animation properties (subtract 90deg to align pointer)
+            spinner.style.setProperty('--start-rotation', (currentRotation - 90) + 'deg');
+            spinner.style.setProperty('--end-rotation', (totalRotation - 90) + 'deg');
+            // Start spinning animation
+            spinner.classList.add('spinning');
+            setTimeout(() => {
+                spinner.classList.remove('spinning');
+                // Update current rotation and set final position
+                currentRotation = totalRotation % 360;
+                spinner.style.transform = `rotate(${currentRotation - 90}deg)`;
+                showResult(assignedHouse);
+                spinBtn.disabled = false;
+                // Restore the input glow after spinning
+                studentCode.style.animation = '';
+            }, 3000);
+        });
+        
+        function showResult(house) {
+            const resultHouse = document.getElementById('resultHouse');
+            const resultDescription = document.getElementById('resultDescription');
+            
+            resultHouse.textContent = house.toUpperCase();
+            resultDescription.textContent = houseDescriptions[house];
+            
+            result.className = `result ${house}`;
+            result.style.display = 'block';
+            
+            // Scroll to result
+            result.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Clear error when typing
+        studentCode.addEventListener('input', () => {
+            error.textContent = '';
+        });
+        
+        // Allow Enter key to spin
+        studentCode.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                spinBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>

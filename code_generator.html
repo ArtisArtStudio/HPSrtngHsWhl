@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Code Generator - House Sorting</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .section h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .input-group label {
+            min-width: 120px;
+            font-weight: 600;
+        }
+        
+        .input-group input, .input-group select {
+            padding: 10px;
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-family: 'Cinzel', serif;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #1a1a2e;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Cinzel', serif;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+        
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+        
+        .student-entry {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .house-colors {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        .gryffindor-color { background: linear-gradient(45deg, #740001, #ae0001); }
+        .hufflepuff-color { background: linear-gradient(45deg, #ecb939, #f0c75e); }
+        .ravenclaw-color { background: linear-gradient(45deg, #0e1a40, #222f5b); }
+        .slytherin-color { background: linear-gradient(45deg, #1a472a, #2a623d); }
+        
+        .generated-codes {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .code-output {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .copy-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            margin-top: 10px;
+        }
+        
+        .copy-btn:hover {
+            background: #45a049;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #ffd700;
+        }
+        
+        .bulk-input {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+        }
+        
+        .bulk-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .warning {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            color: #ffc107;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .input-group label {
+                min-width: auto;
+                margin-bottom: 5px;
+            }
+            
+            .input-group input, .input-group select {
+                min-width: auto;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .generated-codes {
+                font-size: 12px;
+                max-height: 300px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                margin: 5px;
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+            
+            .student-entry {
+                padding: 10px;
+            }
+            
+            .generated-codes {
+                font-size: 11px;
+                padding: 10px;
+            }
+        }
+        
+        @media (max-height: 600px) and (orientation: landscape) {
+            .container {
+                margin: 5px;
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 5px;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+                margin-bottom: 15px;
+            }
+            
+            .section {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .section h2 {
+                font-size: 1.3em;
+                margin-bottom: 10px;
+            }
+            
+            .bulk-input {
+                min-height: 120px;
+            }
+            
+            .generated-codes {
+                max-height: 200px;
+                font-size: 11px;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .stat-card {
+                padding: 10px;
+            }
+            
+            .stat-number {
+                font-size: 1.5em;
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1200px;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            
+            .input-group {
+                max-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏰 Student Code Generator 🏰</h1>
+        <p class="subtitle">Generate unique codes for each student based on their house assignment</p>
+        
+        <div class="warning">
+            <strong>⚠️ Important:</strong> After generating codes, copy the JavaScript code and paste it into your sorting spinner to replace the sample codes.
+        </div>
+        
+        <div class="section">
+            <h2>📝 Individual Student Entry</h2>
+            <div class="input-group">
+                <label>Student Name:</label>
+                <input type="text" id="studentName" placeholder="Enter student name">
+            </div>
+            <div class="input-group">
+                <label>Assigned House:</label>
+                <select id="assignedHouse">
+                    <option value="">Select House</option>
+                    <option value="gryffindor">🦁 Gryffindor</option>
+                    <option value="hufflepuff">🦡 Hufflepuff</option>
+                    <option value="ravenclaw">🦅 Ravenclaw</option>
+                    <option value="slytherin">🐍 Slytherin</option>
+                </select>
+            </div>
+            <button class="btn" onclick="addStudent()">Add Student</button>
+        </div>
+        
+        <div class="section">
+            <h2>📋 Bulk Entry</h2>
+            <p>Enter multiple students at once (one per line in format: Name,House)</p>
+            <textarea class="bulk-input" id="bulkInput" placeholder="Example:&#10;John Smith,gryffindor&#10;Jane Doe,hufflepuff&#10;Bob Johnson,ravenclaw&#10;Alice Brown,slytherin"></textarea>
+            <button class="btn" onclick="processBulkInput()">Process Bulk Entry</button>
+        </div>
+        
+        <div class="section">
+            <h2>👥 Student List</h2>
+            <div id="studentList"></div>
+            <div class="stats" id="stats"></div>
+            <button class="btn" onclick="generateAllCodes()" id="generateBtn" style="display: none;">Generate All Codes</button>
+            <button class="btn" onclick="clearAll()">Clear All</button>
+        </div>
+        
+        <div class="section" id="codeSection" style="display: none;">
+            <h2>🔮 Generated Codes</h2>
+            <div class="code-output">
+                <h3>JavaScript Code for Sorting Spinner:</h3>
+                <div class="generated-codes" id="generatedCodes"></div>
+                <button class="copy-btn" onclick="copyToClipboard()">Copy JavaScript Code</button>
+            </div>
+            
+            <div class="code-output">
+                <h3>Student Code Distribution List:</h3>
+                <div class="generated-codes" id="distributionList"></div>
+                <button class="copy-btn" onclick="copyDistributionList()">Copy Distribution List</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let students = [];
+        let generatedCodes = new Set();
+        
+        function generateRandomCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code;
+            do {
+                code = '';
+                for (let i = 0; i < 6; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+            } while (generatedCodes.has(code));
+            
+            generatedCodes.add(code);
+            return code;
+        }
+        
+        function addStudent() {
+            const name = document.getElementById('studentName').value.trim();
+            const house = document.getElementById('assignedHouse').value;
+            
+            if (!name || !house) {
+                alert('Please enter both name and house!');
+                return;
+            }
+            
+            students.push({ name, house });
+            document.getElementById('studentName').value = '';
+            document.getElementById('assignedHouse').value = '';
+            
+            updateStudentList();
+        }
+        
+        function processBulkInput() {
+            const bulk = document.getElementById('bulkInput').value.trim();
+            if (!bulk) return;
+            
+            const lines = bulk.split('\n');
+            let added = 0;
+            
+            lines.forEach(line => {
+                const parts = line.split(',');
+                if (parts.length === 2) {
+                    const name = parts[0].trim();
+                    const house = parts[1].trim().toLowerCase();
+                    
+                    if (name && ['gryffindor', 'hufflepuff', 'ravenclaw', 'slytherin'].includes(house)) {
+                        students.push({ name, house });
+                        added++;
+                    }
+                }
+            });
+            
+            if (added > 0) {
+                document.getElementById('bulkInput').value = '';
+                updateStudentList();
+                alert(`Added ${added} students successfully!`);
+            } else {
+                alert('No valid entries found. Please check the format.');
+            }
+        }
+        
+        function removeStudent(index) {
+            students.splice(index, 1);
+            updateStudentList();
+        }
+        
+        function updateStudentList() {
+            const listDiv = document.getElementById('studentList');
+            const statsDiv = document.getElementById('stats');
+            const generateBtn = document.getElementById('generateBtn');
+            
+            if (students.length === 0) {
+                listDiv.innerHTML = '<p>No students added yet.</p>';
+                statsDiv.innerHTML = '';
+                generateBtn.style.display = 'none';
+                return;
+            }
+            
+            // Display student list
+            listDiv.innerHTML = students.map((student, index) => {
+                const houseColor = `${student.house}-color`;
+                const houseIcon = {
+                    gryffindor: '🦁',
+                    hufflepuff: '🦡',
+                    ravenclaw: '🦅',
+                    slytherin: '🐍'
+                }[student.house];
+                
+                return `
+                    <div class="student-entry">
+                        <span class="house-colors ${houseColor}"></span>
+                        <strong>${student.name}</strong> → ${houseIcon} ${student.house.charAt(0).toUpperCase() + student.house.slice(1)}
+                        <button class="btn btn-small" onclick="removeStudent(${index})" style="float: right; background: #dc3545;">Remove</button>
+                    </div>
+                `;
+            }).join('');
+            
+            // Display statistics
+            const houseCounts = {
+                gryffindor: 0,
+                hufflepuff: 0,
+                ravenclaw: 0,
+                slytherin: 0
+            };
+            
+            students.forEach(student => {
+                houseCounts[student.house]++;
+            });
+            
+            statsDiv.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${students.length}</div>
+                    <div>Total Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${houseCounts.gryffindor}</div>
+                    <div>🦁 Gryffindor</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${houseCounts.hufflepuff}</div>
+                    <div>🦡 Hufflepuff</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${houseCounts.ravenclaw}</div>
+                    <div>🦅 Ravenclaw</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${houseCounts.slytherin}</div>
+                    <div>🐍 Slytherin</div>
+                </div>
+            `;
+            
+            generateBtn.style.display = 'block';
+        }
+        
+        function generateAllCodes() {
+            if (students.length === 0) {
+                alert('Please add students first!');
+                return;
+            }
+            
+            // Reset generated codes
+            generatedCodes.clear();
+            
+            // Generate codes for each student
+            const codeMapping = {};
+            const distributionData = [];
+            
+            students.forEach(student => {
+                const code = generateRandomCode();
+                codeMapping[code] = student.house;
+                distributionData.push({
+                    name: student.name,
+                    code: code,
+                    house: student.house
+                });
+            });
+            
+            // Create JavaScript code
+            const jsCode = `        // Student code to house mapping - Generated codes
+        const studentHouses = {
+${Object.entries(codeMapping).map(([code, house]) => `            '${code}': '${house}'`).join(',\n')}
+        };`;
+            
+            // Create distribution list
+            const distributionList = distributionData.map(item => {
+                const houseIcon = {
+                    gryffindor: '🦁',
+                    hufflepuff: '🦡',
+                    ravenclaw: '🦅',
+                    slytherin: '🐍'
+                }[item.house];
+                return `${item.name}: ${item.code} (${houseIcon} ${item.house.charAt(0).toUpperCase() + item.house.slice(1)})`;
+            }).join('\n');
+            
+            // Display results
+            document.getElementById('generatedCodes').textContent = jsCode;
+            document.getElementById('distributionList').textContent = distributionList;
+            document.getElementById('codeSection').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('codeSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function copyToClipboard() {
+            const code = document.getElementById('generatedCodes').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('JavaScript code copied to clipboard!');
+            }).catch(() => {
+                alert('Failed to copy. Please select and copy manually.');
+            });
+        }
+        
+        function copyDistributionList() {
+            const list = document.getElementById('distributionList').textContent;
+            navigator.clipboard.writeText(list).then(() => {
+                alert('Distribution list copied to clipboard!');
+            }).catch(() => {
+                alert('Failed to copy. Please select and copy manually.');
+            });
+        }
+        
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all students?')) {
+                students = [];
+                generatedCodes.clear();
+                updateStudentList();
+                document.getElementById('codeSection').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
