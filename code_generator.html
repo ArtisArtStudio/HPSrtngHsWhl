@@ -587,7 +587,7 @@ ${Object.entries(codeMapping).map(([code, house]) => `            '${code}': '${
                 return `${item.name}: ${item.code} (${houseIcon} ${item.house.charAt(0).toUpperCase() + item.house.slice(1)})`;
             }).join('\n');
             
-            // Display results
+            /* // Display results
             document.getElementById('generatedCodes').textContent = jsCode;
             document.getElementById('distributionList').textContent = distributionList;
             document.getElementById('codeSection').style.display = 'block';
@@ -602,7 +602,26 @@ ${Object.entries(codeMapping).map(([code, house]) => `            '${code}': '${
                 alert('JavaScript code copied to clipboard!');
             }).catch(() => {
                 alert('Failed to copy. Please select and copy manually.');
-            });
+            }); */
+            // Display results
+            document.getElementById('generatedCodes').textContent = jsCode;
+            document.getElementById('distributionList').textContent = distributionList;
+            document.getElementById('codeSection').style.display = 'block';
+
+            // Scroll to results
+            document.getElementById('codeSection').scrollIntoView({ behavior: 'smooth' });
+            console.log(distributionData)
+            // ✅ Send to Google Sheets
+            fetch('https://script.google.com/macros/s/AKfycbyIvl1sDKrAa5n_FnbJlEkFXr5wHivFmcWnzCxoECpNrPeC_fq8L5GUP1u3V1Bjrr53-A/exec', {
+                method: 'POST',
+                mode: "no-cors", // required to bypass CORS restriction
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(distributionData)
+            }).then(res => res.text())
+            .then(console.log)
+            .catch(console.error);
         }
         
         function copyDistributionList() {
