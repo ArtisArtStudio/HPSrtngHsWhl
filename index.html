@@ -553,8 +553,11 @@
                 const data = await response.json();
                 // Map codes to houses
                 data.forEach(entry => {
-                    if (entry.code && entry.house) {
-                        studentHouses[entry.code.toUpperCase()] = entry.house.toLowerCase();
+                    if (entry.code && entry.house && entry.name) {
+                        studentHouses[entry.code.toUpperCase()] = {
+                        house: entry.house.toLowerCase(),
+                        name: entry.name
+                        };
                     }
                 });
             } catch (error) {
@@ -600,7 +603,7 @@
             studentCode.classList.remove('input-glow-anim');
             studentCode.style.animation = 'none';
             // Calculate target rotation for the assigned house (no random offset)
-            const targetRotation = houseRotations[assignedHouse];
+            const targetRotation = houseRotations[assignedHouse.house];
             const finalRotation = targetRotation;
             // Calculate total rotation (multiple full spins + final position)
             const totalRotation = currentRotation + 1440 + (finalRotation - (currentRotation % 360));
@@ -624,11 +627,12 @@
         function showResult(house) {
             const resultHouse = document.getElementById('resultHouse');
             const resultDescription = document.getElementById('resultDescription');
+            const selectedhouse=house.house;
+            resultHouse.textContent =selectedhouse.toUpperCase();
+            const studentName = house.name;
+            resultDescription.textContent = studentName+ " " + houseDescriptions[selectedhouse];
             
-            resultHouse.textContent = house.toUpperCase();
-            resultDescription.textContent = houseDescriptions[house];
-            
-            result.className = `result ${house}`;
+            result.className = `result ${selectedhouse}`;
             result.style.display = 'block';
             
             // Scroll to result
