@@ -63,7 +63,7 @@
             color: #fff;
             text-align: center;
             width: 200px;
-            margin: 10px;
+            margin: 1px;
             backdrop-filter: blur(10px);
             font-family: 'Cinzel', serif;
             box-shadow: 0 0 18px 6px #ffe066, 0 0 0 0 #ffd700;
@@ -202,7 +202,28 @@
             cursor: not-allowed;
             transform: none;
         }
-        
+        .spinner {
+        position: relative;
+        }
+
+        .spinner-logo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 16em;   /* adjust size */
+        height: 16em;
+        pointer-events: none; /* so it doesn't block the spin button */
+        opacity: 0.1;         /* subtle appearance */
+        z-index: 5;
+        }
+
+        .spinner-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        }
+
         .result {
             margin-top: 30px;
             padding: 25px;
@@ -214,43 +235,107 @@
             z-index: 100;
             transform: none !important;
         }
-        
-        .result.aistra {
-            background: linear-gradient(135deg, rgba(var(--house-dcolor), 0.9), rgba(var(--house-dcolor), 0.7)),url("images/aistra.png");
-            background-size: contain;
+        .result.aistra::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("images/aistra.png");
+            background-size:contain;
             background-repeat: no-repeat;
             background-position: center;
+            opacity: 0.6; /* ✅ control image alpha here */
+            z-index: 0;
+        }
+        .result.aistra::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(var(--house-dcolor), 0.9), rgba(var(--house-dcolor), 0.7));
+            z-index: 1;        
+        }
+        .result.aistra > * {
+            position: relative;
+            text-shadow: black 1px 1px 2px;
             border-color: #ffd700;
-            text-shadow: black 1px 1px 2px;
+            z-index: 2; /* Ensure child content appears above overlays */
         }
-        
-        .result.nguvu {
-            background: linear-gradient(135deg, rgba(var(--house-dcolor), 0.9), rgba(var(--house-dcolor), 0.7)),url("images/nguvu.png");
+        .result.nguvu::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("images/nguvu.png");
             background-size:contain;
             background-repeat: no-repeat;
             background-position: center;
+            opacity: 0.6; /* ✅ control image alpha here */
+            z-index: 0;
+        }
+        .result.nguvu::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(var(--house-dcolor), 0.9), rgba(var(--house-dcolor), 0.7));
+            z-index: 1;       
+        }
+        .result.nguvu > * {
+            position: relative;
+            text-shadow: black 1px 1px 2px;
             border-color: #372e29;
-            text-shadow: black 1px 1px 2px;
+            z-index: 2; /* Ensure child content appears above overlays */
         }
-        
-        .result.sapere {
-            background: linear-gradient(135deg, rgba(var(--house-dcolor), 0.9), rgba(var(--house-dcolor), 0.7)),url("images/sapere.png");
+        .result.sapere::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("images/sapere.png");
             background-size:contain;
             background-repeat: no-repeat;
             background-position: center;
+            opacity: 0.6; /* ✅ control image alpha here */
+            z-index: 0;
+        }
+        .result.sapere::after{
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(var(--house-dcolor), 0.9), rgba(var(--house-dcolor), 0.7));
+            z-index: 1;
+        }
+        .result.sapere > * {
+            position: relative;
+            text-shadow: black 1px 1px 2px;
             border-color: #946b2d;
-            text-shadow: black 1px 1px 2px;
+            z-index: 2; /* Ensure child content appears above overlays */
         }
-        
-        .result.ohana {
-            background: linear-gradient(135deg, rgba(var(--house-dcolor), 0.9), rgba(var(--house-dcolor), 0.7)),url("images/ohana.png");
+        .result.ohana::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("images/ohana.png");
             background-size:contain;
             background-repeat: no-repeat;
             background-position: center;
-            border-color: #aaaaaa;
-            text-shadow: black 1px 1px 2px;
+            opacity: 0.6; /* ✅ control image alpha here */
+            z-index: 0;
         }
-        
+        .result.ohana::after{
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(var(--house-dcolor), 0.9), rgba(var(--house-dcolor), 0.7));            
+            z-index: 1;
+
+        }
+        .result.ohana > * {
+            position: relative;
+            text-shadow: black 1px 1px 2px;
+            border-color: #aaaaaa;
+            z-index: 2; /* Ensure child content appears above overlays */
+        }
         .result h2 {
             font-size: 2em;
             margin-bottom: 15px;
@@ -283,7 +368,7 @@
         
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
+            50% { opacity: 0.7; transform: scale(1.2); }
         }
         
         @keyframes spin {
@@ -332,13 +417,27 @@
             color: #ffd700;
             margin-bottom: 10px;
         }
-        
-        @media (max-width: 768px) {
+        @media (min-width: 768px) and (min-height: 930px){ 
+            .spinner-logo {
+                width: 22em;   /* adjust size */
+                height: 22em;
+            }
+        }
+        @media (min-height: 635px) and (min-width: 1023px){ 
+            .spinner-logo {
+                width: 22em;   /* adjust size */
+                height: 22em;
+            }
+        }
+        @media (max-width: 769px) {
             .spinner-container {
                 width: 320px;
                 height: 320px;
             }
-            
+           .spinner-logo {
+                width: 18em;   /* adjust size */
+                height: 18em;
+            }
             h1 {
                 font-size: 2em;
             }
@@ -389,7 +488,10 @@
                 font-size: 1em;
                 margin-bottom: 15px;
             }
-            
+             .spinner-logo {
+                width: 13em;   /* adjust size */
+                height: 13em;
+             }
             .spinner-container {
                 width: 250px;
                 height: 250px;
@@ -412,7 +514,10 @@
                 width: 450px;
                 height: 450px;
             }
-            
+             .spinner-logo {
+                width: 24em;   /* adjust size */
+                height: 24em;
+             }
             .house-name {
                 font-size: 1.5em;
             }
@@ -423,7 +528,7 @@
     <div class="stars" id="stars"></div>
      <audio id="soundHandle" style="display:none;" src="audio/celebrate.mp3" type="audio/mpeg"></audio>
     <div class="container" id="container">
-        <h1>⚡ Hogwarts House Sorting ⚡</h1>
+        <h1>⚡ Craven Early College House Sorting ⚡</h1>
         <p class="subtitle">Enter your magical sorting code to discover your destiny</p>
         
         <div class="instructions">
@@ -435,6 +540,7 @@
             <input type="text" class="code-input" id="studentCode" placeholder="Enter your code">
             <div class="error" id="error"></div>
         </div>
+        <button class="spin-btn" id="spinBtn">🪄 Cast the Sorting Spell</button>
         
         <div class="spinner-container" id="spinnerContainer">
             <div class="spinner-pointer"></div>
@@ -447,10 +553,12 @@
                 <div class="house-name house-nguvu">NGUVU<br></div>
                 <div class="house-name house-sapere">SAPERE<br></div>
                 <div class="house-name house-ohana">OHANA<br></div>
+                <div class="spinner-logo">
+                    <img src="images/logo.png" alt="School Logo">
+                </div>
             </div>
         </div>
         
-        <button class="spin-btn" id="spinBtn">🪄 Cast the Sorting Spell</button>
         
         <div class="result" id="result">
             <h2 id="resultHouse"></h2>
@@ -609,7 +717,16 @@
         const error = document.getElementById('error');
         
         let currentRotation = 0;
-        
+        function resetElements() {
+                error.textContent = '';
+                result.style.display = 'none';
+                currentRotation = 0; // Reset rotation for new spin
+                spinner.style.transform = 'rotate(0deg)'; // Reset spinner position
+                spinner.classList.remove('spinning');
+                spinBtn.textContent = '🪄 Cast the Sorting Spell';
+                studentCode.classList.add('input-glow-anim');
+                triggered = false; // Reset trigger
+        }
         // Create stars
         function createStars() {
             const starsContainer = document.getElementById('stars');
@@ -651,15 +768,8 @@
         spinBtn.addEventListener('click', () => {
             if (spinBtn.disabled) return; // Prevent multiple clicks
             if(triggered) {
+                resetElements();
                 studentCode.value = '';
-                error.textContent = '';
-                result.style.display = 'none';
-                currentRotation = 0; // Reset rotation for new spin
-                spinner.style.transform = 'rotate(0deg)'; // Reset spinner position
-                spinner.classList.remove('spinning');
-                spinBtn.textContent = '🪄 Cast the Sorting Spell';
-                studentCode.classList.add('input-glow-anim');
-                triggered = false; // Reset trigger
                 container.scrollIntoView({ behavior: 'smooth' });
                 return;
             }
@@ -764,6 +874,9 @@
         // Clear error when typing
         studentCode.addEventListener('input', () => {
             error.textContent = '';
+            if (triggered){
+                resetElements();
+            }
         });
         
         // Allow Enter key to spin

@@ -80,7 +80,7 @@
             border: 2px solid #ffd700;
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.1);
-            color: #fff;
+            color: #000000;
             font-family: 'Cinzel', serif;
             flex: 1;
             min-width: 200px;
@@ -131,10 +131,10 @@
             vertical-align: middle;
         }
         
-        .gryffindor-color { background: linear-gradient(45deg, #740001, #ae0001); }
-        .hufflepuff-color { background: linear-gradient(45deg, #ecb939, #f0c75e); }
-        .ravenclaw-color { background: linear-gradient(45deg, #0e1a40, #222f5b); }
-        .slytherin-color { background: linear-gradient(45deg, #1a472a, #2a623d); }
+        .Aistra-color { background: linear-gradient(45deg, #740001, #b22d2f); }
+        .Nguvu-color { background: linear-gradient(45deg, #492450, #572c60); }
+        .Sapere-color { background: linear-gradient(45deg, #0e1a40, #004271); }
+        .Ohana-color { background: linear-gradient(45deg, #1a472a, #679650); }
         
         .generated-codes {
             background: rgba(0, 0, 0, 0.3);
@@ -357,7 +357,8 @@
         <p class="subtitle">Generate unique codes for each student based on their house assignment</p>
         
         <div class="warning">
-            <strong>⚠️ Important:</strong> After generating codes, copy the JavaScript code and paste it into your sorting spinner to replace the sample codes.
+            <strong>⚠️ Important:</strong> Press "Generate All Codes" only after you finish entering all students. Pressing multiple times will cause duplicate codes! Notify the shop if you do so.
+            After generating codes, you can copy the distribution list and paste it in a document to double check names/houses. Then delete the house names and distribute the codes with your students.
         </div>
         
         <div class="section">
@@ -370,10 +371,10 @@
                 <label>Assigned House:</label>
                 <select id="assignedHouse">
                     <option value="">Select House</option>
-                    <option value="gryffindor">🦁 Gryffindor</option>
-                    <option value="hufflepuff">🦡 Hufflepuff</option>
-                    <option value="ravenclaw">🦅 Ravenclaw</option>
-                    <option value="slytherin">🐍 Slytherin</option>
+                    <option value="Aistra">Aistra</option>
+                    <option value="Nguvu">Nguvu</option>
+                    <option value="Sapere">Sapere</option>
+                    <option value="Ohana">Ohana</option>
                 </select>
             </div>
             <button class="btn" onclick="addStudent()">Add Student</button>
@@ -382,7 +383,7 @@
         <div class="section">
             <h2>📋 Bulk Entry</h2>
             <p>Enter multiple students at once (one per line in format: Name,House)</p>
-            <textarea class="bulk-input" id="bulkInput" placeholder="Example:&#10;John Smith,gryffindor&#10;Jane Doe,hufflepuff&#10;Bob Johnson,ravenclaw&#10;Alice Brown,slytherin"></textarea>
+            <textarea class="bulk-input" id="bulkInput" placeholder="Example:&#10;John Smith,Aistra&#10;Jane Doe,Nguvu&#10;Bob Johnson,Sapere&#10;Alice Brown,Ohana"></textarea>
             <button class="btn" onclick="processBulkInput()">Process Bulk Entry</button>
         </div>
         
@@ -396,11 +397,11 @@
         
         <div class="section" id="codeSection" style="display: none;">
             <h2>🔮 Generated Codes</h2>
-            <div class="code-output">
+            <!-- <div class="code-output">
                 <h3>JavaScript Code for Sorting Spinner:</h3>
                 <div class="generated-codes" id="generatedCodes"></div>
                 <button class="copy-btn" onclick="copyToClipboard()">Copy JavaScript Code</button>
-            </div>
+            </div> -->
             
             <div class="code-output">
                 <h3>Student Code Distribution List:</h3>
@@ -429,9 +430,9 @@
         }
         
         function addStudent() {
-            const name = document.getElementById('studentName').value.trim();
-            const house = document.getElementById('assignedHouse').value;
-            
+            const name = capitalizeWords(document.getElementById('studentName').value.trim());
+            const house = capitalizeFirst(document.getElementById('assignedHouse').value.trim());
+                    
             if (!name || !house) {
                 alert('Please enter both name and house!');
                 return;
@@ -443,7 +444,12 @@
             
             updateStudentList();
         }
-        
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        }
+        function capitalizeWords(str) {
+            return str.replace(/\b\w/g, char => char.toUpperCase());
+        }
         function processBulkInput() {
             const bulk = document.getElementById('bulkInput').value.trim();
             if (!bulk) return;
@@ -454,10 +460,10 @@
             lines.forEach(line => {
                 const parts = line.split(',');
                 if (parts.length === 2) {
-                    const name = parts[0].trim();
-                    const house = parts[1].trim().toLowerCase();
+                    const name = capitalizeWords(parts[0].trim());
+                    const house = capitalizeFirst(parts[1].trim());
                     
-                    if (name && ['gryffindor', 'hufflepuff', 'ravenclaw', 'slytherin'].includes(house)) {
+                    if (name && ['Aistra', 'Nguvu', 'Sapere', 'Ohana'].includes(house)) {
                         students.push({ name, house });
                         added++;
                     }
@@ -493,17 +499,11 @@
             // Display student list
             listDiv.innerHTML = students.map((student, index) => {
                 const houseColor = `${student.house}-color`;
-                const houseIcon = {
-                    gryffindor: '🦁',
-                    hufflepuff: '🦡',
-                    ravenclaw: '🦅',
-                    slytherin: '🐍'
-                }[student.house];
-                
+
                 return `
                     <div class="student-entry">
                         <span class="house-colors ${houseColor}"></span>
-                        <strong>${student.name}</strong> → ${houseIcon} ${student.house.charAt(0).toUpperCase() + student.house.slice(1)}
+                        <strong>${student.name}</strong> → ${student.house}
                         <button class="btn btn-small" onclick="removeStudent(${index})" style="float: right; background: #dc3545;">Remove</button>
                     </div>
                 `;
@@ -511,10 +511,10 @@
             
             // Display statistics
             const houseCounts = {
-                gryffindor: 0,
-                hufflepuff: 0,
-                ravenclaw: 0,
-                slytherin: 0
+                Aistra: 0,
+                Nguvu: 0,
+                Sapere: 0,
+                Ohana: 0
             };
             
             students.forEach(student => {
@@ -527,20 +527,20 @@
                     <div>Total Students</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">${houseCounts.gryffindor}</div>
-                    <div>🦁 Gryffindor</div>
+                    <div class="stat-number">${houseCounts.Aistra}</div>
+                    <div>Aistra</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">${houseCounts.hufflepuff}</div>
-                    <div>🦡 Hufflepuff</div>
+                    <div class="stat-number">${houseCounts.Nguvu}</div>
+                    <div>Nguvu</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">${houseCounts.ravenclaw}</div>
-                    <div>🦅 Ravenclaw</div>
+                    <div class="stat-number">${houseCounts.Sapere}</div>
+                    <div>Sapere</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">${houseCounts.slytherin}</div>
-                    <div>🐍 Slytherin</div>
+                    <div class="stat-number">${houseCounts.Ohana}</div>
+                    <div>Ohana</div>
                 </div>
             `;
             
@@ -564,27 +564,23 @@
                 const code = generateRandomCode();
                 codeMapping[code] = student.house;
                 distributionData.push({
-                    name: student.name,
-                    code: code,
-                    house: student.house
-                });
+                name: student.name,
+                code: code,
+                house: student.house,
+                datetime: new Date().toLocaleString()  // ⏰ Add current timestamp
+            });
+
             });
             
             // Create JavaScript code
-            const jsCode = `        // Student code to house mapping - Generated codes
-        const studentHouses = {
-${Object.entries(codeMapping).map(([code, house]) => `            '${code}': '${house}'`).join(',\n')}
-        };`;
+/*             const jsCode = `        // Student code to house mapping - Generated codes
+            const studentHouses = {
+            ${Object.entries(codeMapping).map(([code, house]) => `            '${code}': '${house}'`).join(',\n')}
+            };`; */
             
             // Create distribution list
             const distributionList = distributionData.map(item => {
-                const houseIcon = {
-                    gryffindor: '🦁',
-                    hufflepuff: '🦡',
-                    ravenclaw: '🦅',
-                    slytherin: '🐍'
-                }[item.house];
-                return `${item.name}: ${item.code} (${houseIcon} ${item.house.charAt(0).toUpperCase() + item.house.slice(1)})`;
+                return `${item.name}: ${item.code} ${item.house}`;
             }).join('\n');
             
             /* // Display results
@@ -604,7 +600,7 @@ ${Object.entries(codeMapping).map(([code, house]) => `            '${code}': '${
                 alert('Failed to copy. Please select and copy manually.');
             }); */
             // Display results
-            document.getElementById('generatedCodes').textContent = jsCode;
+            //document.getElementById('generatedCodes').textContent = jsCode;
             document.getElementById('distributionList').textContent = distributionList;
             document.getElementById('codeSection').style.display = 'block';
 
