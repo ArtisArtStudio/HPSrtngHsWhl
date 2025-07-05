@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"/> 
+    <meta name="color-scheme" content="dark only">
     <title>Hogwarts House Sorting Spinner</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.8.0/dist/confetti.browser.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
         
@@ -98,28 +101,28 @@
             transform-origin: right bottom;
         }
         
-        .gryffindor {
-            background: linear-gradient(45deg, #740001, #ae0001);
+        .aistra {
+            background: linear-gradient(45deg, var(--house-dcolor), var(--house-color,#ae0001));
             border-bottom: 2px solid #ffd700;
             border-right: 2px solid #ffd700;
         }
         
-        .hufflepuff {
-            background: linear-gradient(45deg, #ecb939, #f0c75e);
+        .nguvu {
+            background: linear-gradient(45deg, var(--house-dcolor), var(--house-color,#f0c75e));
             transform: rotate(90deg);
             border-bottom: 2px solid #372e29;
             border-right: 2px solid #372e29;
         }
         
-        .ravenclaw {
-            background: linear-gradient(45deg, #0e1a40, #222f5b);
+        .sapere {
+            background: linear-gradient(45deg, var(--house-dcolor), var(--house-color,#222f5b));
             transform: rotate(180deg);
             border-bottom: 2px solid #946b2d;
             border-right: 2px solid #946b2d;
         }
         
-        .slytherin {
-            background: linear-gradient(45deg, #1a472a, #2a623d);
+        .ohana {
+            background: linear-gradient(45deg, var(--house-dcolor), var(--house-color,#2a623d));
             transform: rotate(270deg);
             border-bottom: 2px solid #aaaaaa;
             border-right: 2px solid #aaaaaa;
@@ -131,25 +134,25 @@
             left: 50%;
             transform-origin: 0 0;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 1.3em;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
             z-index: 10;
             white-space: nowrap;
             pointer-events: none;
         }
-        .house-gryffindor {
+        .house-aistra {
             color: #ffd700;
             /* JS will set transform for centering */
         }
-        .house-hufflepuff {
-            color: #372e29;
+        .house-nguvu {
+            color: #FFFFFF;
             /* JS will set transform for centering */
         }
-        .house-ravenclaw {
+        .house-sapere {
             color: #946b2d;
             /* JS will set transform for centering */
         }
-        .house-slytherin {
+        .house-ohana {
             color: #aaaaaa;
             /* JS will set transform for centering */
         }
@@ -212,25 +215,40 @@
             transform: none !important;
         }
         
-        .result.gryffindor {
-            background: linear-gradient(135deg, rgba(116, 0, 1, 0.8), rgba(174, 0, 1, 0.6));
+        .result.aistra {
+            background: linear-gradient(135deg, rgba(178, 45, 47, 0.9), rgba(178, 45, 47, 0.7)),url("images/aistra.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
             border-color: #ffd700;
+            text-shadow: black 1px 1px 2px;
         }
         
-        .result.hufflepuff {
-            background: linear-gradient(135deg, rgba(236, 185, 57, 0.8), rgba(240, 199, 94, 0.6));
+        .result.nguvu {
+            background: linear-gradient(135deg, rgba(87, 44, 96, 0.9), rgba(87, 44, 96, 0.7)),url("images/nguvu.png");
+            background-size:contain;
+            background-repeat: no-repeat;
+            background-position: center;
             border-color: #372e29;
-            color: #372e29;
+            text-shadow: black 1px 1px 2px;
         }
         
-        .result.ravenclaw {
-            background: linear-gradient(135deg, rgba(14, 26, 64, 0.8), rgba(34, 47, 91, 0.6));
+        .result.sapere {
+            background: linear-gradient(135deg, rgba(0, 66, 113, 0.9), rgba(0, 66, 113, 0.7)),url("images/sapere.png");
+            background-size:contain;
+            background-repeat: no-repeat;
+            background-position: center;
             border-color: #946b2d;
+            text-shadow: black 1px 1px 2px;
         }
         
-        .result.slytherin {
-            background: linear-gradient(135deg, rgba(26, 71, 42, 0.8), rgba(42, 98, 61, 0.6));
+        .result.ohana {
+            background: linear-gradient(135deg, rgba(103, 150, 80, 0.9), rgba(103, 150, 80, 0.7)),url("images/ohana.png");
+            background-size:contain;
+            background-repeat: no-repeat;
+            background-position: center;
             border-color: #aaaaaa;
+            text-shadow: black 1px 1px 2px;
         }
         
         .result h2 {
@@ -324,7 +342,9 @@
             h1 {
                 font-size: 2em;
             }
-            
+            .house-name {
+                font-size: 1.4em;
+            }
             .code-input {
                 width: 280px;
             }
@@ -349,7 +369,7 @@
             }
             
             .house-name {
-                font-size: 12px;
+                font-size: 1em;
             }
         }
         
@@ -357,7 +377,9 @@
             .container {
                 padding: 10px;
             }
-            
+            .house-name {
+                font-size: 1em;
+            }
             h1 {
                 font-size: 1.8em;
                 margin-bottom: 5px;
@@ -392,14 +414,14 @@
             }
             
             .house-name {
-                font-size: 16px;
+                font-size: 1.5em;
             }
         }
     </style>
 </head>
 <body>
     <div class="stars" id="stars"></div>
-    
+     <audio id="soundHandle" style="display:none;" src="audio/celebrate.mp3" type="audio/mpeg"></audio>
     <div class="container" id="container">
         <h1>⚡ Hogwarts House Sorting ⚡</h1>
         <p class="subtitle">Enter your magical sorting code to discover your destiny</p>
@@ -417,14 +439,14 @@
         <div class="spinner-container" id="spinnerContainer">
             <div class="spinner-pointer"></div>
             <div class="spinner" id="spinner">
-                <div class="spinner-segment gryffindor"></div>
-                <div class="spinner-segment hufflepuff"></div>
-                <div class="spinner-segment ravenclaw"></div>
-                <div class="spinner-segment slytherin"></div>
-                <div class="house-name house-gryffindor">GRYFFINDOR<br><span class="house-emoji">🦁</span></div>
-                <div class="house-name house-hufflepuff">HUFFLEPUFF<br><span class="house-emoji">🦡</span></div>
-                <div class="house-name house-ravenclaw">RAVENCLAW<br><span class="house-emoji">🦅</span></div>
-                <div class="house-name house-slytherin">SLYTHERIN<br><span class="house-emoji">🐍</span></div>
+                <div class="spinner-segment aistra"></div>
+                <div class="spinner-segment nguvu"></div>
+                <div class="spinner-segment sapere"></div>
+                <div class="spinner-segment ohana"></div>
+                <div class="house-name house-aistra">AISTRA<br></div>
+                <div class="house-name house-nguvu">NGUVU<br></div>
+                <div class="house-name house-sapere">SAPERE<br></div>
+                <div class="house-name house-ohana">OHANA<br></div>
             </div>
         </div>
         
@@ -437,21 +459,49 @@
     </div>
     
     <script>
+        let colors = {
+            aistra: "#b22d2f", // AISTRA
+            nguvu: "#572c60", // NGUVU
+            sapere: "#004271", // SAPERE
+            ohana: "#679650" // OHANA
+        };
+        let soundHandle;
+        function darkenHexColor(hex, percent = 20) {
+            let num = parseInt(hex.slice(1), 16);
+            let amt = Math.floor(2.55 * percent);
+
+            let r = (num >> 16) - amt;
+            let g = (num >> 8 & 0x00FF) - amt;
+            let b = (num & 0x0000FF) - amt;
+
+            // Clamp values between 0 and 255
+            r = Math.max(0, r);
+            g = Math.max(0, g);
+            b = Math.max(0, b);
+
+            return `rgb(${r}, ${g}, ${b})`;
+        }
         // --- Dynamic centering of house names ---
         function centerHouseNames() {
             // Segment center angles in degrees (relative to spinner, 0deg = right, counterclockwise)
             const houseAngles = {
-                'gryffindor': -135,
-                'hufflepuff': -45,
-                'ravenclaw': 45,
-                'slytherin': 135
+                'aistra': -135,
+                'nguvu': -45,
+                'sapere': 45,
+                'ohana': 135
             };
             const ell= document.querySelector('.spinner-container');
             
             // Radius from center to house names (same as before)
             let radius = 30; // px, distance from center (same as before)
-            ['gryffindor','hufflepuff','ravenclaw','slytherin'].forEach(house => {
-                const el = document.querySelector('.house-' + house);
+            ['aistra','nguvu','sapere','ohana'].forEach(house => {
+                const houseslice = document.querySelector(`.spinner-segment.${house}`);
+                if (houseslice) {
+                    houseslice.style.setProperty('--house-color', colors[house]);
+                    const originalColor = colors[house]; // e.g. "#f0c75e"
+                    houseslice.style.setProperty('--house-dcolor', darkenHexColor(originalColor, 25));
+                }
+                const el = document.querySelector(`.house-${house}`);
                 if (!el) return;
                 // Reset transform to measure
                 el.style.transform = 'none';
@@ -475,52 +525,70 @@
                 el.style.transform = `rotate(${houseAngles[house]}deg) translateX(${radius}px) translateY(${-0.5 * textHeight}px)`;
             });
         }
+        soundHandle = document.getElementById('soundHandle');
+        soundHandle.autoplay = true;
+        soundHandle.muted = false;
+        soundHandle.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+        soundHandle.src = 'audio/celebrate.mp3';
+        soundHandle.play();
+        soundHandle.pause();
         // Run after DOM is ready and on resize (for font size changes)
         window.addEventListener('DOMContentLoaded', centerHouseNames);
         window.addEventListener('resize', centerHouseNames);
+        document.addEventListener(
+            "visibilitychange",
+            function (evt) {
+                if (document.visibilityState != "visible") {
+                    soundHandle.pause(); // Pause sound when not visible
+                } else {
+                    soundHandle.play(); // Resume sound when visible
+                }
+            },
+            false,
+        );
         // Also after font size changes (e.g. media queries)
         setTimeout(centerHouseNames, 100); // fallback for late font load
 
         // Student code to house mapping - completely random looking codes
         /* const studentHouses = {
             // Example codes - these look completely random but map to specific houses
-            'MX7K9P': 'gryffindor',
-            'QR3N8L': 'hufflepuff',
-            'WZ5J2A': 'ravenclaw',
-            'BT4Y6U': 'slytherin',
-            'FH9X1C': 'gryffindor',
-            'VD8M3S': 'hufflepuff',
-            'PL2K7E': 'ravenclaw',
-            'NQ6R4W': 'slytherin',
-            'GJ1Z9B': 'gryffindor',
-            'HF3V8X': 'hufflepuff',
-            'SK5Q2M': 'ravenclaw',
-            'ZY7D4N': 'slytherin',
-            'RT8L6A': 'gryffindor',
-            'CW9P3J': 'hufflepuff',
-            'XE2S7K': 'ravenclaw',
-            'UB4M1Q': 'slytherin',
-            'YT6N9R': 'gryffindor',
-            'LD3F8W': 'hufflepuff',
-            'PQ7X2Z': 'ravenclaw',
-            'VH5J4S': 'slytherin'
+            'MX7K9P': 'aistra',
+            'QR3N8L': 'nguvu',
+            'WZ5J2A': 'sapere',
+            'BT4Y6U': 'ohana',
+            'FH9X1C': 'aistra',
+            'VD8M3S': 'nguvu',
+            'PL2K7E': 'sapere',
+            'NQ6R4W': 'ohana',
+            'GJ1Z9B': 'aistra',
+            'HF3V8X': 'nguvu',
+            'SK5Q2M': 'sapere',
+            'ZY7D4N': 'ohana',
+            'RT8L6A': 'aistra',
+            'CW9P3J': 'nguvu',
+            'XE2S7K': 'sapere',
+            'UB4M1Q': 'ohana',
+            'YT6N9R': 'aistra',
+            'LD3F8W': 'nguvu',
+            'PQ7X2Z': 'sapere',
+            'VH5J4S': 'ohana'
         };*/
         
         const houseDescriptions = {
-            'gryffindor': 'Congratulations! You belong in GRYFFINDOR! You are brave, daring, and chivalrous. Your courage and determination will serve you well in all your magical endeavors.',
-            'hufflepuff': 'Congratulations! You belong in HUFFLEPUFF! You are loyal, patient, and hardworking. Your dedication and fairness make you a true friend to all.',
-            'ravenclaw': 'Congratulations! You belong in RAVENCLAW! You are wise, creative, and curious. Your love of learning and wit will unlock many mysteries.',
-            'slytherin': 'Congratulations! You belong in SLYTHERIN! You are ambitious, cunning, and resourceful. Your determination and leadership will help you achieve great things.'
+            'aistra': 'Congratulations! You belong in AISTRA! You are brave, daring, and chivalrous. Your courage and determination will serve you well in all your magical endeavors.',
+            'nguvu': 'Congratulations! You belong in NGUVU! You are loyal, patient, and hardworking. Your dedication and fairness make you a true friend to all.',
+            'sapere': 'Congratulations! You belong in SAPERE! You are wise, creative, and curious. Your love of learning and wit will unlock many mysteries.',
+            'ohana': 'Congratulations! You belong in OHANA! You are ambitious, cunning, and resourceful. Your determination and leadership will help you achieve great things.'
         }; 
         let studentHouses = {}; // this will be filled dynamically
         let triggered = false; // Track if the button was clicked to reset
         // Target rotations to point the pointer (12 o'clock) to the center of each house segment
         // Each segment is 90°, so centers are at -45° (315°), 45°, 135°, 225°
         const houseRotations = {
-            'gryffindor': 135,    // swapped with ravenclaw
-            'hufflepuff': 45,
-            'ravenclaw': 315,     // swapped with gryffindor
-            'slytherin': 225
+            'aistra': 135,    // swapped with sapere
+            'nguvu': 45,
+            'sapere': 315,     // swapped with aistra
+            'ohana': 225
         };
         
         const spinBtn = document.getElementById('spinBtn');
@@ -597,11 +665,12 @@
             }
             spinnercont.scrollIntoView({ behavior: 'smooth' });
             error.textContent = '';
-            spinBtn.disabled = true;
             result.style.display = 'none';
             // Stop the input glow while spinning
             studentCode.classList.remove('input-glow-anim');
             studentCode.style.animation = 'none';
+            studentCode.disabled = true;
+
             // Calculate target rotation for the assigned house (no random offset)
             const targetRotation = houseRotations[assignedHouse.house];
             const finalRotation = targetRotation;
@@ -618,13 +687,13 @@
                 currentRotation = totalRotation % 360;
                 spinner.style.transform = `rotate(${currentRotation - 90}deg)`;
                 showResult(assignedHouse);
-                spinBtn.disabled = false;
                 // Restore the input glow after spinning
                 studentCode.style.animation = '';
             }, 3000);
         });
         
         function showResult(house) {
+           
             const resultHouse = document.getElementById('resultHouse');
             const resultDescription = document.getElementById('resultDescription');
             const selectedhouse=house.house;
@@ -637,9 +706,45 @@
             
             // Scroll to result
             result.scrollIntoView({ behavior: 'smooth' });
-            spinBtn.disabled = false;
-            spinBtn.textContent = '🔄 Spin Again';
+            
+            spinBtn.disabled = true;
+
+            setTimeout(() => {
+                spinBtn.disabled = false;
+                studentCode.disabled = false;
+                studentCode.value = '';
+                spinBtn.textContent = '🔄 Spin Again';
+            }, 10000);           
             triggered = true; // Set trigger to true after successful spin
+            soundHandle.volume = 0.5;
+            soundHandle.play();
+            let rect = result.getBoundingClientRect();
+            let vw = window.innerWidth;
+            let vh = window.innerHeight;    
+            var end = Date.now() + (10 * 1000);
+
+            // go Buckeyes!
+
+            (function frame() {
+            confetti({
+                particleCount: 2,
+                angle: 60,
+                spread: 55,
+                origin: { x: rect.left/vw, y: rect.top/vh },
+                colors: [colors[house.house], '#ffffff']
+            });
+            confetti({
+                particleCount: 2,
+                angle: 120,
+                spread: 55,
+                origin: { x: rect.right/vw, y: rect.top/vh },
+                colors: [colors[house.house], '#ffffff']
+            });
+
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+            }());
         }
         
         // Clear error when typing
