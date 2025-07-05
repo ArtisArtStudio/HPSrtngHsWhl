@@ -216,7 +216,7 @@
         }
         
         .result.aistra {
-            background: linear-gradient(135deg, rgba(178, 45, 47, 0.9), rgba(178, 45, 47, 0.7)),url("images/aistra.png");
+            background: linear-gradient(135deg, rgba(var(--house-dcolor), 0.9), rgba(var(--house-dcolor), 0.7)),url("images/aistra.png");
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -225,7 +225,7 @@
         }
         
         .result.nguvu {
-            background: linear-gradient(135deg, rgba(87, 44, 96, 0.9), rgba(87, 44, 96, 0.7)),url("images/nguvu.png");
+            background: linear-gradient(135deg, rgba(var(--house-dcolor), 0.9), rgba(var(--house-dcolor), 0.7)),url("images/nguvu.png");
             background-size:contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -234,7 +234,7 @@
         }
         
         .result.sapere {
-            background: linear-gradient(135deg, rgba(0, 66, 113, 0.9), rgba(0, 66, 113, 0.7)),url("images/sapere.png");
+            background: linear-gradient(135deg, rgba(var(--house-dcolor), 0.9), rgba(var(--house-dcolor), 0.7)),url("images/sapere.png");
             background-size:contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -243,7 +243,7 @@
         }
         
         .result.ohana {
-            background: linear-gradient(135deg, rgba(103, 150, 80, 0.9), rgba(103, 150, 80, 0.7)),url("images/ohana.png");
+            background: linear-gradient(135deg, rgba(var(--house-dcolor), 0.9), rgba(var(--house-dcolor), 0.7)),url("images/ohana.png");
             background-size:contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -466,6 +466,17 @@
             ohana: "#679650" // OHANA
         };
         let soundHandle;
+        function hexToRGB(hex) {
+            hex = hex.replace('#', '');
+            if (hex.length === 3) {
+                hex = hex.split('').map(c => c + c).join('');
+            }
+            const bigint = parseInt(hex, 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return `${r}, ${g}, ${b}`;
+        }
         function darkenHexColor(hex, percent = 20) {
             let num = parseInt(hex.slice(1), 16);
             let amt = Math.floor(2.55 * percent);
@@ -539,9 +550,8 @@
             "visibilitychange",
             function (evt) {
                 if (document.visibilityState != "visible") {
-                    soundHandle.pause(); // Pause sound when not visible
-                } else {
-                    soundHandle.play(); // Resume sound when visible
+                    soundHandle.pause();
+                    soundHandle.currentTime = 0;
                 }
             },
             false,
@@ -693,7 +703,6 @@
         });
         
         function showResult(house) {
-           
             const resultHouse = document.getElementById('resultHouse');
             const resultDescription = document.getElementById('resultDescription');
             const selectedhouse=house.house;
@@ -703,7 +712,12 @@
             
             result.className = `result ${selectedhouse}`;
             result.style.display = 'block';
-            
+            const resultspane = document.querySelector(`.result.${selectedhouse}`);
+                if (resultspane) {
+                    const originalColor = colors[selectedhouse]; // e.g. "#f0c75e"
+                    const darkRGB = hexToRGB(originalColor); // convert to "r, g, b"
+                    resultspane.style.setProperty('--house-dcolor', darkRGB);
+                }
             // Scroll to result
             result.scrollIntoView({ behavior: 'smooth' });
             
