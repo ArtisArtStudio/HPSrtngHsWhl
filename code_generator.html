@@ -146,6 +146,11 @@
             line-height: 1.6;
             max-height: 400px;
             overflow-y: auto;
+            user-select: none;
+            white-space: pre-line;
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* IE/Edge */
         }
         
         .code-output {
@@ -356,12 +361,12 @@
         <h1>🏰 Student Code Generator 🏰</h1>
         <p class="subtitle">Generate unique codes for each student based on their house assignment</p>
         
-        <div class="warning">
-            <strong>⚠️ Important:</strong> Press "Generate All Codes" only after you finish entering all students. Pressing multiple times will cause duplicate codes! Notify the shop if you do so.
+        <div class="warning" style="white-space: pre-line;">
+            <strong>⚠️ Important:</strong> Press "Generate All Codes" only after you finish entering all students. After you press, you won't be able to modify your list. Reloading the page and making further entries might cause duplicate codes! Notify the shop if you want to make modifications after pressing it.
             After generating codes, you can copy the distribution list and paste it in a document to double check names/houses. Then delete the house names and distribute the codes with your students.
         </div>
-        
-        <div class="section">
+
+        <div class="section" id="individualEntrySection">
             <h2>📝 Individual Student Entry</h2>
             <div class="input-group">
                 <label>Student Name:</label>
@@ -380,14 +385,14 @@
             <button class="btn" onclick="addStudent()">Add Student</button>
         </div>
         
-        <div class="section">
+        <div class="section" id="bulkEntrySection">
             <h2>📋 Bulk Entry</h2>
             <p>Enter multiple students at once (one per line in format: Name,House)</p>
             <textarea class="bulk-input" id="bulkInput" placeholder="Example:&#10;John Smith,Aistra&#10;Jane Doe,Nguvu&#10;Bob Johnson,Sapere&#10;Alice Brown,Ohana"></textarea>
             <button class="btn" onclick="processBulkInput()">Process Bulk Entry</button>
         </div>
         
-        <div class="section">
+        <div class="section" id="studentListSection">
             <h2>👥 Student List</h2>
             <div id="studentList"></div>
             <div class="stats" id="stats"></div>
@@ -552,10 +557,11 @@
                 alert('Please add students first!');
                 return;
             }
+            if (confirm('Are you sure you want generate the codes? Once you create, you cant modify your student list.')) {
             
             // Reset generated codes
             generatedCodes.clear();
-            
+                        
             // Generate codes for each student
             const codeMapping = {};
             const distributionData = [];
@@ -571,7 +577,9 @@
             });
 
             });
-            
+            document.getElementById('studentListSection').style.display = 'none';
+            document.getElementById('bulkEntrySection').style.display = 'none';
+            document.getElementById('individualEntrySection').style.display = 'none';
             // Create JavaScript code
 /*             const jsCode = `        // Student code to house mapping - Generated codes
             const studentHouses = {
@@ -615,6 +623,7 @@
                 },
                 body: JSON.stringify(distributionData)
             });
+        }
         }
         
         function copyDistributionList() {
